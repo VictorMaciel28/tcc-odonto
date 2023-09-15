@@ -16,8 +16,8 @@
         </RouterLink>
         
       </div>
-      <RouterLink v-if="userRole == 'admin'" style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
-      <RouterLink v-if="userRole == 'admin'" style="margin-left:2%;" to="/dashboard" class="button has-text-centered mt-6 mb-6">Perguntas</RouterLink>
+      <RouterLink style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
+      <RouterLink style="margin-left:2%;" to="/dashboard" class="button has-text-centered mt-6 mb-6">Perguntas</RouterLink>
 
       <h2 class="title has-text-centered">{{ pergunta.titulo }}</h2>
 

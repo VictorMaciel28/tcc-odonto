@@ -3,7 +3,7 @@
     <h1 class="title has-text-centered is-1 mt-4">DASHBOARD</h1>
 
     <RouterLink to="/nova-pergunta" style="margin-left:10%;" class="button has-text-centered mt-6 mb-6">Adicionar nova pergunta</RouterLink>
-    <RouterLink v-if="userRole == 'admin'" style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
+    <RouterLink style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
     <RouterLink to="/logout" style="margin-left:50%; background-color: rgb(243, 125, 125);" class="button has-text-centered mt-6 mb-6">Logout</RouterLink>
 
     <div class="columns is-multiline is-centered">
