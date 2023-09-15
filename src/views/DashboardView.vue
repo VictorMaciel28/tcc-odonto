@@ -4,7 +4,7 @@
 
     <RouterLink to="/nova-pergunta" style="margin-left:10%;" class="button has-text-centered mt-6 mb-6">Adicionar nova pergunta</RouterLink>
     <RouterLink v-if="userRole == 'admin'" style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
-    <RouterLink to="/logout" style="margin-left:40%; background-color: rgb(153, 4, 4);" class="button has-text-centered mt-6 mb-6">Sair</RouterLink>
+    <RouterLink to="/logout" style="margin-left:50%; background-color: rgb(243, 125, 125);" class="button has-text-centered mt-6 mb-6">Logout</RouterLink>
 
     <div class="columns is-multiline is-centered">
       <div 
