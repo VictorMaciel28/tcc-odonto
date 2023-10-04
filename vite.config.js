@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'https://victormaciel28.github.io/tcc-odonto/',
+  base: '/tcc-odonto/',
   plugins: [vue()],
   resolve: {
     alias: {
