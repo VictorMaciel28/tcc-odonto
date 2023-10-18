@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { getAuth } from "firebase/auth";
 import QuestionarioView from '../views/QuestionarioView.vue'
+import QuestionarioProjeto from '../views/QuestionarioProjeto.vue'
 import DashboardView from '../views/DashboardView.vue'
 import PerguntaView from '../views/PerguntaView.vue'
 import RegisterView from '../views/RegisterView.vue'
@@ -18,6 +19,11 @@ const router = createRouter({
       path: '',
       name: 'questionario',
       component: QuestionarioView
+    },
+    {
+      path: '/projeto/:id',
+      name: 'projeto',
+      component: QuestionarioProjeto
     },
     {
       path: '/dashboard',
