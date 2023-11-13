@@ -4,7 +4,7 @@
 
       <div class="botao-inicio mb-2">
         <RouterLink
-          to="/threads"
+          to="/"
           class="button" title="Início">
           <i class="fa-solid fa-house"></i>
         </RouterLink>

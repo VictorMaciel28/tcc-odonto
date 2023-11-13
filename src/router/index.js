@@ -4,6 +4,7 @@ import QuestionarioView from '../views/QuestionarioView.vue'
 import QuestionarioProjeto from '../views/QuestionarioProjeto.vue'
 import DashboardView from '../views/DashboardView.vue'
 import PerguntaView from '../views/PerguntaView.vue'
+import TrabalhoView from '../views/TrabalhoView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import SigninView from '../views/SigninView.vue'
 import ThreadsView from '../views/ThreadsView.vue'
@@ -17,8 +18,8 @@ const router = createRouter({
   routes: [
     {
       path: '',
-      name: 'questionario',
-      component: QuestionarioView
+      name: 'threads',
+      component: ThreadsView
     },
     {
       path: '/projeto/:id',
@@ -26,7 +27,7 @@ const router = createRouter({
       component: QuestionarioProjeto
     },
     {
-      path: '/dashboard',
+      path: '/dashboard/:id',
       name: 'dashboard',
       component: DashboardView,
       beforeEnter: (to, from, next) => {
@@ -62,7 +63,20 @@ const router = createRouter({
       component: SigninView
     },
     {
-      path: '/nova-pergunta',
+      path: '/novo-trabalho',
+      name: 'novoTrabalho',
+      component: TrabalhoView,
+      beforeEnter: (to, from, next) => {
+        const user = store.getters.getUser 
+        if (user) {
+          next()
+        } else {
+          next("/signin")
+        }
+      }
+    },
+    {
+      path: '/nova-pergunta/:projetoId',
       name: 'novaPergunta',
       component: PerguntaView
     },

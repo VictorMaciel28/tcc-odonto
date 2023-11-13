@@ -1,10 +1,21 @@
 <template>
   <div class="container">
-    <h1 class="title has-text-centered is-1 mt-4">DASHBOARD</h1>
+    <h3 class="title has-text-centered is-1">Configurar trabalho</h3>
 
-    <RouterLink to="/nova-pergunta" style="margin-left:10%;" class="button has-text-centered mt-6 mb-6">Adicionar nova pergunta</RouterLink>
-    <RouterLink style="margin-left:2%;" to="/threads" class="button has-text-centered mt-6 mb-6">Trabalhos</RouterLink>
-    <RouterLink to="/logout" style="margin-left:50%; background-color: rgb(243, 125, 125);" class="button has-text-centered mt-6 mb-6">Logout</RouterLink>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="is-flex is-justify-content-space-between">
+          <!-- <RouterLink to="/novo-trabalho" class="button has-text-centered">Novo trabalho</RouterLink>
+          <RouterLink to="/logout" class="button has-text-centered" style="background-color: rgb(243, 125, 125);">Sair</RouterLink> -->
+
+
+          <RouterLink :to="`/nova-pergunta/${route.params.id}`" class="button">Adicionar nova pergunta</RouterLink>
+          <button class="button is-danger is-light" @click="this.$router.go(-1);">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    
 
     <div class="columns is-multiline is-centered">
       <div 
@@ -38,11 +49,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { RouterLink } from 'vue-router'
-import { db } from '@/firebase'
+import { RouterLink, useRoute} from 'vue-router';
+import { db } from '@/firebase';
 import { 
   collection, getDocs, query,
-  deleteDoc, doc, orderBy
+  deleteDoc, doc, orderBy, where
 } from 'firebase/firestore'
 import store from '../store';
 
@@ -50,6 +61,10 @@ import store from '../store';
  * Referências do dashboard
  */
 const perguntas = ref([]);
+
+const route = useRoute();
+
+const c = route.params.id;
 
 const userRole = store.getters.getUser.role;
 
@@ -59,11 +74,11 @@ const userRole = store.getters.getUser.role;
 const perguntasRef = collection(db, "perguntas");
 
 onMounted( () => {
-  getTodasPerguntas()
+  getTodasPerguntas();
 });
 
 const getTodasPerguntas = async () => {
-  const queryPerguntas = query(perguntasRef, orderBy("data_criacao", "desc"));
+  const queryPerguntas = query(perguntasRef, where("projetoId", "==", route.params.id));
   const querySnapshot = await getDocs(queryPerguntas);
   querySnapshot.forEach((doc) => {
     perguntas.value.push(doc);

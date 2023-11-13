@@ -1,23 +1,26 @@
 <template>
-  <div class="container">
+  <div class="container column is-5">
 
-    <h2 class="title">Configurar pergunta</h2>
 
-    <div class="field">
-      <label class="label">Nome da pergunta</label>
-      <div class="control">
-        <input class="input" type="text" placeholder="Insira o nome da pergunta" v-model="formulario.nome">
-      </div>
-    </div>
+    <h2 class="title">Informações do trabalho</h2>
 
     <div class="field">
       <label class="label">Título</label>
       <div class="control">
-        <input class="input" type="text" placeholder="Insira o título da pergunta" v-model="formulario.titulo">
+        <input class="input" type="text" v-model="formulario.nome">
       </div>
     </div>
 
-    <div class="file has-name">
+    <div class="field">
+      <label class="label">Conteúdo </label>
+      <div class="control">
+        <textarea class="textarea" placeholder="Digite aqui o conteúdo do trabalho" v-model="formulario.descricao"></textarea>
+      </div>
+    </div>
+
+    
+
+    <!-- <div class="file has-name">
       <label class="file-label">
         <input class="file-input" type="file" name="resume" v-on:change="imagemSelecionada($event)">
         <span class="file-cta">
@@ -32,20 +35,13 @@
           {{ arquivoImagem.nome_imagem ? arquivoImagem.nome_imagem : '...' }}
         </span>
       </label>
-    </div>
+    </div> -->
 
-    <div class="image-container">
+    <!-- <div class="image-container">
       <img class="image" :src="arquivoImagem.url_imagem" alt="">
-    </div>
+    </div> -->
 
-    <div class="field" style="margin:3%;">
-      <div class="control">
-        <input id="isFirst" type="checkbox" v-model="formulario.is_inicio">
-        <label for="isFirst"> É a primeira pergunta </label><br>
-      </div>
-    </div>
-
-    <div
+    <!-- <div
       v-for="(opcao, index) in formulario.opcoes"
       :key="index"
       class="field is-grouped mt-5"
@@ -71,15 +67,27 @@
       <div class="control ml-3">
         <button class="button" @click="removerOpcao(index)">Remover opcao</button>
       </div>
-    </div>
+    </div> -->
 
-    <div class="control mt-5">
-      <button class="button" @click="adicionarNovaOpcao()">Adicionar opcao</button>
-    </div>
+    <label class="label">Administradores </label>
+      <div
+        v-for="(permissao, index) in formulario.administradores"
+        :key="index"
+        class="field is-grouped mt-5"
+      >
+        <div class="control is-expanded">
+          <input class="input" type="text" placeholder="Email" v-model="permissao.email">
+        </div>
+      </div>
+     <div class="control mt-5">
+      <button class="button" @click="adicionarNovoEmail()">Novo administrador</button>
+    </div> 
+
+    
 
     <div class="field is-grouped is-grouped-right mt-6">
       <div class="control" v-if="!route.params.idPergunta">
-        <button @click="adicionarNovaPergunta()" class="button">Cadastrar</button>
+        <button @click="registrarTrabalho()" class="button">Cadastrar</button>
       </div>
       <div class="control" v-if="route.params.idPergunta">
         <button @click="editarPergunta()" class="button">Salvar Edicao</button>
@@ -89,6 +97,7 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script setup>
@@ -96,9 +105,10 @@
 import { ref, onMounted } from 'vue';
 import { db, storage } from '@/firebase';
 import { RouterLink, useRouter, useRoute } from 'vue-router';
+import store from '../store'
 import { 
   collection, getDocs, addDoc, 
-  doc, getDoc, updateDoc, where, query
+  doc, getDoc, updateDoc 
 } from "firebase/firestore";
 import { 
   ref as refStorage, uploadBytes, 
@@ -108,31 +118,23 @@ import {
 const router = useRouter()
 const route = useRoute()
 
+let administradores =  ref([{"email":store.getters.getUser.email}]);
 /*
   REFERÊNCIAS DO FORMULÁRIO
 */
 const proximasPerguntas = ref([]);
 const arquivoImagem = ref({})
 const formulario = ref({
+  descricao: '',
   nome: '',
-  texto: '',
-  titulo: '',
-  url_imagem: '',
-  nome_imagem_firestore: '',
-  is_inicio: false,
-  projetoId: route.params.projetoId,
-  opcoes: [
-    {
-      opcao_texto: '',
-      proxima_pergunta: ''
-    },
-  ]
+  administradores: administradores
 })
 
 /*
   REFERÊNCIAS DO FIREBASE
 */
 const perguntasRef = collection(db, "perguntas");
+const trabalhosRef = collection(db, "projetos");
 
 /*
   OUTRAS VARIÁVEIS
@@ -146,33 +148,17 @@ onMounted( () => {
     carregaPerguntaParaEdicao(idPergunta);
   }
 
-  getTodasPerguntas();
 });
 
 /*
-  GET TODAS AS PERGUNTAS
-*/
-const getTodasPerguntas = async () => {
-  if(route.params.idPergunta){
-    const perguntaRef = doc(perguntasRef, route.params.idPergunta);
-    const perguntaDoc = await getDoc(perguntaRef);
-
-    const projetoId = perguntaDoc.data().projetoId;
-    const queryPerguntas = query(perguntasRef, where("projetoId", "==", projetoId));
-    const perguntasQuerySnapshot = await getDocs(queryPerguntas);
-
-    perguntasQuerySnapshot.forEach((doc) => {
-      proximasPerguntas.value.push(doc);
-    });
-  }else{
-    const queryPerguntas = query(perguntasRef, where("projetoId", "==", route.params.projetoId));
-    const perguntasQuerySnapshot = await getDocs(queryPerguntas);
-    perguntasQuerySnapshot.forEach(async (doc) => {
-      proximasPerguntas.value.push(doc);
-  }); 
-  }
-  
-}
+//   GET TODAS AS PERGUNTAS
+// */
+// const getTodasPerguntas = async () => {
+//   const querySnapshot = await getDocs(perguntasRef);
+//   querySnapshot.forEach((doc) => {
+//     proximasPerguntas.value.push(doc);
+//   });
+// }
 
 /**
  * ALTERA PROXIMA PERGUNTA
@@ -188,11 +174,12 @@ const removerOpcao = (index) => {
   formulario.value.opcoes.splice(index, 1);
 }
 
-const adicionarNovaOpcao = () => {
-  formulario.value.opcoes.push({
-    opcao_texto: '',
-    proxima_pergunta: ''
-  });
+const adicionarNovoEmail = () => {
+  formulario.value.administradores.push({email: ''});
+}
+
+const getAdministradores = () =>{
+  return [{"email":"teste@email.com"}] 
 }
 
 /**
@@ -207,14 +194,15 @@ const carregaPerguntaParaEdicao = async (idPergunta) => {
   arquivoImagem.value.url_imagem = docSnap.data().url_imagem;
 }
 
-const adicionarNovaPergunta = async () => {
+
+const registrarTrabalho = async () => {
   if(Object.keys(arquivoImagem.value).length > 0){
     await enviarImagem();
   }
 
-  formulario.value.data_criacao = Date.now()
+  formulario.value.created_at = Date.now()
 
-  await addDoc(perguntasRef, formulario.value);
+  await addDoc(trabalhosRef, formulario.value);
   router.push("/");
 }
 
@@ -226,7 +214,7 @@ const editarPergunta = async () => {
 
   const docRef = doc(db, "perguntas", idPergunta);
   await updateDoc(docRef, formulario.value);
-  router.push("/");
+  router.push("/dashboard");
 }
 
 /**

@@ -2,9 +2,15 @@
   <div class="container">
     <h1 class="title has-text-centered is-1 mt-4">Trabalhos</h1>
 
-    <RouterLink to="/nova-pergunta" style="margin-left:10%;" class="button has-text-centered mt-6 mb-6">Novo trabalho</RouterLink>
-    <RouterLink to="/logout" style="margin-left:50%; background-color: rgb(243, 125, 125);" class="button has-text-centered mt-6 mb-6">Logout</RouterLink>
-
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="mt-6 mb-6 is-flex is-justify-content-space-between">
+          <RouterLink to="/novo-trabalho" class="button has-text-centered">Novo trabalho</RouterLink>
+          <RouterLink to="/logout" class="button has-text-centered" style="background-color: rgb(243, 125, 125);">Sair</RouterLink>
+        </div>
+      </div>
+    </div>
+    
     <div class="columns is-multiline is-centered">
       <div 
         v-for="pergunta in perguntas"
@@ -27,9 +33,8 @@
             </div>
         </div>
         <footer class="card-footer">
-            <RouterLink :to="'/projeto/' + pergunta.id"  class="card-footer-item">Fluxo</RouterLink>
-            <RouterLink v-if="pergunta.data().permissoes.includes(user.email)" to="/dashboard" class="card-footer-item">Editar</RouterLink>
-            <RouterLink v-if="pergunta.data().permissoes.includes(user.email)" to="#" class="card-footer-item delete-link">Permissoes</RouterLink> <!--@click="apagarPergunta(pergunta.id)" -->
+          <RouterLink :to="'/projeto/' + pergunta.id" class="card-footer-item">Fluxo</RouterLink>
+          <RouterLink v-if="hasPermission(pergunta.data().administradores, user?.email)" :to="'/dashboard/' + pergunta.id" class="card-footer-item">Editar</RouterLink>
         </footer>
       </div>
     </div>
@@ -61,6 +66,7 @@ onMounted( () => {
   getTodosTrabalhos();
 });
 
+
 const getTodosTrabalhos = async () => {
   const queryPerguntas = query(projetos, orderBy("created_at", "desc"));
   const querySnapshot = await getDocs(queryPerguntas);
@@ -74,6 +80,14 @@ const apagarPergunta = async (perguntaId) => {
 
   perguntas.value = perguntas.value.filter( (pergunta) => pergunta.id !== perguntaId);
 }
+
+const hasPermission = (administradores, userEmail) => {
+  if (!administradores || !Array.isArray(administradores)) {
+    return false;
+  }  
+    return administradores.some(admin => admin.email === userEmail);
+  }
+
 </script>
 
 <style scoped>
